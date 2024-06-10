@@ -16,7 +16,7 @@ Yandex Cloud infrastructure is used in the project
 
 ### Preparation:
 ---
-Создать файл конфигурации
+Create a configuration file
 ```bash
 nano ~/.terraformrc
 ```
@@ -33,22 +33,22 @@ provider_installation {
     }
 }
 ```
-It is necessary to add the secrets.backend.tfvars file and specify values for the variables:
+#### It is necessary to add the secrets.backend.tfvars file and specify values for the variables:
 
-bucket - bucket name in the Yandex Cloud infrastructure.
-access_key - identifier of the static access key to the service account in Yandex Cloud.
-secret_key - token of the static secret key of access to the service account in Yandex Cloud.
-dynamodb_table - table name for fixing state locks.
-dynamodb_endpoint - URL to the api for working with the table.
+`bucket` - bucket name in the Yandex Cloud infrastructure. <br>
+`access_key` - identifier of the static access key to the service account in Yandex Cloud. <br>
+`secret_key` - token of the static secret key of access to the service account in Yandex Cloud. <br>
+`dynamodb_table` - table name for fixing state locks. <br>
+`dynamodb_endpoint` - URL to the api for working with the table. <br>
 
-It is necessary to add the secrets.auto.tfvars file and specify values for the variables
+#### It is necessary to add the secrets.auto.tfvars file and specify values for the variables
 
-yc_token - a token to access the cloud infrastructure.
-yc_folder - identifier of the directory in the cloud.
-yc_user - the username used in the operations.
-db_name - database name.
-db_user - database user name.
-db_password - database user password.
+`yc_token` - a token to access the cloud infrastructure. <br>
+`yc_folder` - identifier of the directory in the cloud. <br>
+`yc_user` - the username used in the operations. <br>
+`db_name` - database name. <br>
+`db_user` - database user name. <br>
+`db_password` - database user password. <br>
 
 ### Usage:
 ---
