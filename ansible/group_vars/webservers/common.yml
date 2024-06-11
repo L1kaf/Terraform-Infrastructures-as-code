@@ -1,2 +1,10 @@
 destination_path: "/root/redmine"
 redmine_env_file: "{{ destination_path }}/.env"
+datadog_api_key: "{{ datadog_key }}"
+datadog_site: datadoghq.eu
+datadog_checks:
+http_check:
+  init_config:
+    instances:
+      - name: app_check
+        url: http://localhost

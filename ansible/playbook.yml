@@ -51,3 +51,11 @@
           - "80:3000"
         env_file: "{{ redmine_env_file }}"
       tags: deploy
+
+- hosts: webservers
+  tasks:
+    - name: Import the Datadog Agent role from the Datadog collection
+      import_role:
+        name: datadog.dd.agent 
+      become: yes    
+      tags: deploy

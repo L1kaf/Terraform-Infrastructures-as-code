@@ -2,15 +2,26 @@ terraform {
   required_providers {
     yandex = {
       source = "yandex-cloud/yandex"
+      version = ">= 0.13"
+    }
+    datadog = {
+      source = "DataDog/datadog"
+      version = "~> 3.6.0"
     }
   }
-  required_version = ">= 0.13"
+  
 }
 
 provider "yandex" {
   zone = var.yc_zone
   token = var.yc_token
   folder_id = var.yc_folder
+}
+
+provider "datadog" {
+  api_key = var.datadog_api_key
+  app_key = var.datadog_app_key
+  api_url = var.datadog_url
 }
 
 resource "yandex_compute_disk" "boot-disk" {
@@ -185,4 +196,25 @@ resource "yandex_dns_recordset" "a" {
   data    = [for listener in yandex_lb_network_load_balancer.lb.listener :
             listener.external_address_spec[*].address
             if listener.name == "http"][0]
+}
+
+resource "datadog_monitor" "host_is_up" {
+  name               = "host is up"
+  type               = "service check"
+  message            = "Monitor triggered"
+  escalation_message = "Escalation message"
+
+  query = "\"http.can_connect\".over(\"*\").by(\"url\").last(4).count_by_status()"
+
+  monitor_thresholds {
+    ok       = 0
+    warning  = 1
+    critical = 2
+  }
+
+  notify_no_data    = true
+  renotify_interval = 60
+
+  notify_audit = true
+  timeout_h    = 1
 }
