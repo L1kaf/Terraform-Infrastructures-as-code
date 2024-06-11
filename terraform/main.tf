@@ -169,3 +169,20 @@ output "database_credentials" {
     db_host: ${yandex_mdb_postgresql_cluster.dbcluster.host.0.fqdn}
     DOC
 }
+
+resource "yandex_dns_zone" "default" {
+  name        = "buryka-test"
+  zone        = var.domain_name
+  public      = true
+}
+
+
+resource "yandex_dns_recordset" "a" {
+  zone_id = yandex_dns_zone.default.id
+  name    = "@"
+  type    = "A"
+  ttl     = 600
+  data    = [for listener in yandex_lb_network_load_balancer.lb.listener :
+            listener.external_address_spec[*].address
+            if listener.name == "http"][0]
+}
