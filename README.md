@@ -7,6 +7,8 @@ This repository explores Terraform's ability to implement the Infrastructure as 
 
 Yandex Cloud infrastructure is used in the project
 
+Demo: http://buryka-test.ru/
+
 ### System Requirements:
 ---
 * Linux
