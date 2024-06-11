@@ -1,0 +1,53 @@
+- hosts: all
+  become: yes
+  collections:
+    - community.docker
+
+  roles:
+    - role: geerlingguy.pip
+      tags: install
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      tags: update
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+      tags: update
+
+    - name: Install specific version of requests
+      pip:
+        name: requests==2.31.0
+        state: present
+      tags: install
+
+    - name: Install docker module via pip
+      pip:
+        name: docker
+      tags: install
+
+    - name: Create env file directory
+      file:
+        path: "{{ destination_path }}"
+        state: directory
+      tags: deploy
+
+    - name: Copy env file template
+      template:
+        src: .env
+        dest: "{{ redmine_env_file }}"
+      tags: deploy
+
+    - name: Run Redmine
+      community.docker.docker_container:
+        name: redmine
+        image: redmine
+        restart_policy: always
+        state: started
+        ports:
+          - "80:3000"
+        env_file: "{{ redmine_env_file }}"
+      tags: deploy

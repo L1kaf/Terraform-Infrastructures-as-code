@@ -58,7 +58,7 @@ resource "yandex_compute_instance" "web" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = "${var.yc_user}:${file("~/.ssh/id_rsa.pub")}"
   }
 
   connection {
@@ -153,4 +153,19 @@ resource "yandex_mdb_postgresql_database" "db" {
   lc_collate = "en_US.UTF-8"
   lc_type    = "en_US.UTF-8"
   depends_on = [yandex_mdb_postgresql_cluster.dbcluster]
+}
+
+output "ansible_inventory" {
+  value = <<-DOC
+    [webservers]
+    %{~ for i in yandex_compute_instance.web ~}
+    ${i.name} ansible_host=${i.network_interface[0].nat_ip_address}
+    %{~ endfor ~}
+    DOC
+}
+
+output "database_credentials" {
+  value     = <<-DOC
+    db_host: ${yandex_mdb_postgresql_cluster.dbcluster.host.0.fqdn}
+    DOC
 }

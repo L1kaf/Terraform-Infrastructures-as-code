@@ -1,0 +1,2 @@
+destination_path: "/root/redmine"
+redmine_env_file: "{{ destination_path }}/.env"

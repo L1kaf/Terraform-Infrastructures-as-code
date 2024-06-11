@@ -66,3 +66,13 @@ Deletion of previously created infrastructure:
 ```bash
 make destroy
 ```
+
+Application and system pre-configuration:
+```bash
+make install
+```
+
+Deploy applications to remote machines:
+```bash
+make deploy
+```
