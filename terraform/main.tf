@@ -57,7 +57,7 @@ resource "yandex_compute_instance" "web" {
 
 resource "yandex_lb_network_load_balancer" "lb" {
   name = "project-lb"
-  
+
   listener {
     name        = "http"
     port        = 80
