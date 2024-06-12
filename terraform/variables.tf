@@ -1,22 +1,22 @@
 variable "yc_token" {
-    type = string
-    sensitive = true
+  type = string
+  sensitive = true
 }
 
 variable "yc_zone" {
-    type = string
+  type = string
 }
 
 variable "os_image" {
-    type = string
+  type = string
 }
 
 variable "yc_folder" {
-    type = string
+  type = string
 }
 
 variable "yc_user" {
-    type = string
+  type = string
 }
 
 variable "db_name" {
@@ -47,5 +47,13 @@ variable "datadog_app_key" {
 }
 
 variable "datadog_url" {
+  type = string
+}
+
+variable "ssh_public_key" {
+  type = string
+}
+
+variable "ssh_private_key_path" {
   type = string
 }

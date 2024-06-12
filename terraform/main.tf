@@ -1,17 +1,3 @@
-terraform {
-  required_providers {
-    yandex = {
-      source = "yandex-cloud/yandex"
-      version = ">= 0.13"
-    }
-    datadog = {
-      source = "DataDog/datadog"
-      version = "~> 3.6.0"
-    }
-  }
-  
-}
-
 resource "yandex_compute_disk" "boot-disk" {
   count = 2
   name        = "boot-disk-${count.index}"
@@ -57,13 +43,13 @@ resource "yandex_compute_instance" "web" {
   }
 
   metadata = {
-    ssh-keys = "${var.yc_user}:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = "${var.yc_user}:${var.ssh_public_key}"
   }
 
   connection {
     type        = "ssh"
     user        = var.yc_user
-    private_key = file("~/.ssh/id_rsa")
+    private_key = var.ssh_private_key_path
     host        = self.network_interface[0].nat_ip_address
   }
   
