@@ -52,14 +52,10 @@
         env_file: "{{ redmine_env_file }}"
       tags: deploy
 
-    - name: Add Upmon
-      shell: curl -m 10 --retry 5 {{ upmon_key }}
-      tags: deploy
-
 - hosts: webservers
   tasks:
     - name: Import the Datadog Agent role from the Datadog collection
       import_role:
-        name: datadog.dd.agent 
-      become: yes    
+        name: datadog.dd.agent
+      become: yes
       tags: deploy
