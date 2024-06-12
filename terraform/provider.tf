@@ -1,19 +1,19 @@
 terraform {
   required_providers {
     yandex = {
-      source = "yandex-cloud/yandex"
+      source  = "yandex-cloud/yandex"
       version = ">= 0.13"
     }
     datadog = {
-      source = "DataDog/datadog"
+      source  = "DataDog/datadog"
       version = "~> 3.6.0"
     }
   }
 }
 
 provider "yandex" {
-  zone = var.yc_zone
-  token = var.yc_token
+  zone      = var.yc_zone
+  token     = var.yc_token
   folder_id = var.yc_folder
 }
 

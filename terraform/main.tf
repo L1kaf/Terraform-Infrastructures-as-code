@@ -1,32 +1,32 @@
 resource "yandex_compute_disk" "boot-disk" {
-  count = 2
-  name        = "boot-disk-${count.index}"
-  size        = "20"
-  type        = "network-hdd"
-  zone        = "ru-central1-a"
-  image_id    = var.os_image
+  count    = 2
+  name     = "boot-disk-${count.index}"
+  size     = "20"
+  type     = "network-hdd"
+  zone     = "ru-central1-a"
+  image_id = var.os_image
 }
 
 resource "yandex_vpc_network" "default" {
-    name = "project"
+  name = "project"
 }
 
 resource "yandex_vpc_subnet" "web" {
   zone           = "ru-central1-a"
-  network_id     = "${yandex_vpc_network.default.id}"
+  network_id     = yandex_vpc_network.default.id
   v4_cidr_blocks = ["192.168.0.0/24"]
 }
 
 resource "yandex_compute_instance" "web" {
-  count = 2
+  count       = 2
   name        = "web-${count.index}"
   platform_id = "standard-v1"
   zone        = "ru-central1-a"
 
   resources {
     core_fraction = 5
-    cores  = 2
-    memory = 2
+    cores         = 2
+    memory        = 2
   }
 
   boot_disk {
@@ -34,8 +34,8 @@ resource "yandex_compute_instance" "web" {
   }
 
   network_interface {
-    subnet_id = "${yandex_vpc_subnet.web.id}"
-    nat = true
+    subnet_id = yandex_vpc_subnet.web.id
+    nat       = true
   }
 
   scheduling_policy {
@@ -52,7 +52,6 @@ resource "yandex_compute_instance" "web" {
     private_key = var.ssh_private_key_path
     host        = self.network_interface[0].nat_ip_address
   }
-  
 }
 
 
@@ -60,8 +59,8 @@ resource "yandex_lb_network_load_balancer" "lb" {
   name = "project-lb"
   
   listener {
-    name = "http"
-    port = 80
+    name        = "http"
+    port        = 80
     target_port = 80
     external_address_spec {}
   }
@@ -75,10 +74,10 @@ resource "yandex_lb_network_load_balancer" "lb" {
         port = 80
         path = "/"
       }
-      interval = 2
-      timeout = 1
+      interval            = 2
+      timeout             = 1
       unhealthy_threshold = 3
-      healthy_threshold = 2
+      healthy_threshold   = 2
     }
   }
 }
@@ -108,7 +107,7 @@ resource "yandex_mdb_postgresql_cluster" "dbcluster" {
       disk_size          = 15
     }
     postgresql_config = {
-      max_connections    = 100
+      max_connections = 100
     }
   }
 
@@ -143,22 +142,22 @@ resource "yandex_mdb_postgresql_database" "db" {
 output "ansible_inventory" {
   value = <<-DOC
     [webservers]
-    %{~ for i in yandex_compute_instance.web ~}
+    %{~for i in yandex_compute_instance.web~}
     ${i.name} ansible_host=${i.network_interface[0].nat_ip_address}
-    %{~ endfor ~}
+    %{~endfor~}
     DOC
 }
 
 output "database_credentials" {
-  value     = <<-DOC
+  value = <<-DOC
     db_host: ${yandex_mdb_postgresql_cluster.dbcluster.host.0.fqdn}
     DOC
 }
 
 resource "yandex_dns_zone" "default" {
-  name        = "buryka-test"
-  zone        = var.domain_name
-  public      = true
+  name   = "buryka-test"
+  zone   = var.domain_name
+  public = true
 }
 
 
@@ -167,9 +166,9 @@ resource "yandex_dns_recordset" "a" {
   name    = "@"
   type    = "A"
   ttl     = 600
-  data    = [for listener in yandex_lb_network_load_balancer.lb.listener :
-            listener.external_address_spec[*].address
-            if listener.name == "http"][0]
+  data = [for listener in yandex_lb_network_load_balancer.lb.listener :
+    listener.external_address_spec[*].address
+  if listener.name == "http"][0]
 }
 
 resource "datadog_monitor" "host_is_up" {
